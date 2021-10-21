@@ -30,12 +30,32 @@ try {
     client.on('messageCreate', async message => {
         const {content, guild} = message;
 
-        if (content === '!shuffle members') {
+        if (content.startsWith('!shuffle')) {
             const {members} = guild;
+            const argument = content.substr(8).trim() || 'members';
+            const list = await members.fetch();
+            let response = null;
 
-            const list = await members.fetch()
+            switch (argument) {
+                case 'member':
+                case 'members':
+                    list.sweep(member => member.user.bot);
+                    response = 'Here\'s the shuffled list of server members:\n';
+                    break;
+                case 'bot':
+                case 'bots':
+                    list.sweep(member => !member.user.bot);
+                    response = 'Here\'s the shuffled list of server bots:\n';
+                    break;
+                case 'all':
+                    response = 'Here\'s the shuffled list of server members (including bots):\n';
+                    break;
+                default:
+                    await message.reply(`Invalid argument '${argument}'`);
+                    return;
+            }
+
             const names = shuffle(list.map(member => member.displayName));
-            let response = 'Here\'s the shuffled list of server members:\n';
 
             for (let index in names) {
                 response += `\n${parseInt(index) + 1}) ${names[index]}`;
