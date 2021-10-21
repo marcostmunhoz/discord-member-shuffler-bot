@@ -1,15 +1,19 @@
 {
-  "name": "discord-member-shuffle-bot",
+  "name": "discord-member-shuffler-bot",
   "version": "1.0.0",
   "description": "A simple discord bot to show a shuffled list of server members.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "forever index.js"
   },
   "keywords": [],
   "author": "Marcos T Munhoz <marmunhoz414@gmail.com> (https://github.com/marcostmunhoz)",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^13.2.0"
+    "discord.js": "^13.2.0",
+    "forever": "^4.0.1"
+  },
+  "engines": {
+    "node": "16.x"
   }
 }
