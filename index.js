@@ -1,54 +1,37 @@
 import { Client } from 'discord.js';
-import shuffleArray from './utils/shuffle-array.js';
+import * as commands from './commands/index.js'
+import './deploy-commands.js';
 
 const client = new Client({
-    intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES']
+    intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES', 'GUILD_PRESENCES']
 });
 
-try {
-    client.on('ready', () => {
-        console.log(`Bot started successfully. Currently logged in as '${client.user.tag}'`);
-    })
 
-    client.on('messageCreate', async message => {
-        const {content, guild} = message;
+client.on('ready', () => {
+    console.log(`Bot started successfully. Currently logged in as '${client.user.tag}'`);
+});
 
-        if (content.startsWith('!shuffle')) {
-            const {members} = guild;
-            const argument = content.substr(8).trim() || 'members';
-            const list = await members.fetch();
-            let response = null;
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) {
+        return;
+    }
 
-            switch (argument) {
-                case 'member':
-                case 'members':
-                    list.sweep(member => member.user.bot);
-                    response = 'Here\'s the shuffled list of server members:\n';
-                    break;
-                case 'bot':
-                case 'bots':
-                    list.sweep(member => !member.user.bot);
-                    response = 'Here\'s the shuffled list of server bots:\n';
-                    break;
-                case 'all':
-                    response = 'Here\'s the shuffled list of server members (including bots):\n';
-                    break;
-                default:
-                    await message.reply(`Invalid argument '${argument}'`);
-                    return;
-            }
-
-            const names = shuffleArray(list.map(member => member.displayName));
-
-            for (let index in names) {
-                response += `\n${parseInt(index) + 1}) ${names[index]}`;
-            }
-
-            await message.reply(response);
+    for (const command of Object.values(commands)) {
+        if (command.data.name !== interaction.commandName) {
+            continue;
         }
-    })
 
-    client.login(process.env.DISCORD_BOT_TOKEN)
-} catch (e) {
-    console.error('There was an error', e);
-}
+        try {
+            await command.execute(interaction);
+        } catch (e) {
+            console.error(`There was an error during the '${interaction.commandName}' command execution.`, e);
+
+            await interaction.reply({
+                content: 'Sorry... I think I messed up :face_with_spiral_eyes:',
+                ephemeral: true
+            });
+        }
+    }
+});
+
+client.login(process.env.DISCORD_BOT_TOKEN);
