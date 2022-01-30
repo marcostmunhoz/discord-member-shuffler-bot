@@ -1,26 +1,9 @@
 import { Client } from 'discord.js';
+import shuffleArray from './utils/shuffle-array.js';
 
 const client = new Client({
     intents: ['GUILDS', 'GUILD_MEMBERS', 'GUILD_MESSAGES']
 });
-
-/**
- * Shuffles array in place. ES6 version
- * 
- * @param {Array} array items An array containing the items.
- * @returns {Array}
- * 
- * @see https://stackoverflow.com/a/6274381
- */
- function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        
-        [array[i], array[j]] = [array[j], array[i]];
-    }
-
-    return array;
-}
 
 try {
     client.on('ready', () => {
@@ -55,7 +38,7 @@ try {
                     return;
             }
 
-            const names = shuffle(list.map(member => member.displayName));
+            const names = shuffleArray(list.map(member => member.displayName));
 
             for (let index in names) {
                 response += `\n${parseInt(index) + 1}) ${names[index]}`;
