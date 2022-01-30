@@ -3,17 +3,25 @@
   "version": "1.0.0",
   "description": "A simple discord bot to show a shuffled list of server members.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
+    "watch": "nodemon index.js",
     "start": "forever index.js"
   },
   "keywords": [],
   "author": "Marcos T Munhoz <marmunhoz414@gmail.com> (https://github.com/marcostmunhoz)",
   "license": "ISC",
   "dependencies": {
+    "@discordjs/builders": "^0.12.0",
+    "@discordjs/rest": "^0.3.0",
+    "discord-api-types": "^0.26.1",
     "discord.js": "^13.2.0",
     "forever": "^4.0.1"
   },
   "engines": {
     "node": "16.x"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
